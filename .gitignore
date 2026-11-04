@@ -1,0 +1,17 @@
+# Compilacao
+build/
+*.class
+
+# Dados gerados pela execucao do sistema
+SistemaBiblioteca/dados/*.csv
+
+# Fontes auxiliares usados para montar o relatorio
+relatorio/fonte/
+
+# Sistema operacional
+Thumbs.db
+desktop.ini
+
+# Enunciado e barema fornecidos pelo professor
+Barema_Avaliacao_POO.pdf
+Projeto Final de POO.pdf
