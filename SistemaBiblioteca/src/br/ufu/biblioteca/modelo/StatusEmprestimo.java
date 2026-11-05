@@ -1,7 +1,6 @@
 package br.ufu.biblioteca.modelo;
 
-// Situação do empréstimo. O atraso não entra aqui porque é calculado a partir
-// da data prevista, não é um estado guardado em arquivo.
+// O atraso não entra aqui: ele é calculado pela data prevista
 public enum StatusEmprestimo {
 
     ATIVO,

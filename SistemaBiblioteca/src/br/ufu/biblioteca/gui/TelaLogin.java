@@ -21,10 +21,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 
-/**
- * Porta de entrada do sistema. Não decide quem pode entrar: entrega o que foi
- * digitado para a Biblioteca e reage à exceção que voltar.
- */
+// Não decide quem entra: manda o que foi digitado para a Biblioteca e
+// reage à exceção que voltar.
 public class TelaLogin extends JFrame {
 
     private final Biblioteca biblioteca;
@@ -81,7 +79,7 @@ public class TelaLogin extends JFrame {
         JButton entrar = new JButton("Entrar");
         entrar.addActionListener(evento -> entrar());
 
-        // Enter em qualquer um dos campos também faz login.
+        // enter nos campos também entra
         getRootPane().setDefaultButton(entrar);
 
         JPanel botoes = new JPanel();
@@ -116,13 +114,11 @@ public class TelaLogin extends JFrame {
         try {
             Pessoa usuario = biblioteca.autenticar(identificador, senha);
 
-            // Login aceito: a tela principal assume e esta é descartada.
             new TelaPrincipal(biblioteca, usuario).setVisible(true);
             dispose();
 
         } catch (BibliotecaException e) {
-            // Uma única captura cobre erro de login e qualquer falha de
-            // arquivo, porque todas as exceções do sistema têm a mesma base.
+            // um catch só pega erro de login e falha de arquivo
             JOptionPane.showMessageDialog(this, e.getMessage(),
                     "Não foi possível entrar", JOptionPane.WARNING_MESSAGE);
             campoSenha.setText("");

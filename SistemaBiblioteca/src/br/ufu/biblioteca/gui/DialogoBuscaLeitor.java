@@ -27,14 +27,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Busca de leitor por matrícula, nome ou CPF.
- *
- * Uma lista suspensa com todos os leitores funciona enquanto a base é
- * pequena, mas trava a tela quando a biblioteca tem milhares de cadastros.
- * Aqui o bibliotecário digita o que sabe, vê os resultados com a situação de
- * cada um e escolhe.
- */
+// Uma lista suspensa até funciona com poucos leitores, mas trava com a base
+// cheia. Aqui ele digita o que sabe e escolhe no resultado.
 public class DialogoBuscaLeitor extends JDialog {
 
     private static final String[] COLUNAS =
@@ -71,7 +65,7 @@ public class DialogoBuscaLeitor extends JDialog {
         tabela.setAutoCreateRowSorter(true);
         tabela.getColumnModel().getColumn(1).setPreferredWidth(220);
 
-        // Duplo clique escolhe direto, sem passar pelo botão.
+        // duplo clique escolhe direto
         tabela.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evento) {
@@ -155,8 +149,7 @@ public class DialogoBuscaLeitor extends JDialog {
         if (linha < 0) {
             return;
         }
-        // Com a tabela ordenável, a linha que aparece não é a mesma posição da
-        // lista, então o índice precisa ser convertido antes de usar.
+        // a tabela é ordenável, então converte a linha
         selecionado = encontrados.get(tabela.convertRowIndexToModel(linha));
         dispose();
     }

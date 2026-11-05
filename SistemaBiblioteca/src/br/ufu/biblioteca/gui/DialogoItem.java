@@ -24,20 +24,14 @@ import java.awt.Frame;
 import java.awt.GridLayout;
 import java.time.LocalDate;
 
-/**
- * Formulário de item do acervo, usado tanto para cadastrar quanto para
- * editar. A mesma tela serve aos dois casos porque os campos são os mesmos:
- * o que muda é que na edição o código e o tipo ficam travados, já que são a
- * identidade do registro e dos tombos colados nos exemplares.
- *
- * O campo de detalhe muda de rótulo conforme o tipo, porque autor, edição e
- * duração ocupam o mesmo lugar na tela mas pertencem a classes diferentes.
- */
+// Serve para cadastrar e para editar: os campos são os mesmos, só que na
+// edição o código e o tipo ficam travados. O campo de detalhe troca de
+// rótulo conforme o tipo (autor, edição ou duração).
 public class DialogoItem extends JDialog {
 
     private final Biblioteca biblioteca;
 
-    // Nulo quando é um cadastro novo; preenchido quando é edição.
+    // null quando é cadastro novo
     private final ItemAcervo emEdicao;
 
     private final JComboBox<String> tipo = new JComboBox<>(new String[]{"Livro", "Revista", "DVD"});
@@ -125,10 +119,7 @@ public class DialogoItem extends JDialog {
         return rodape;
     }
 
-    /**
-     * Troca o rótulo do detalhe e recarrega prazo e multa com as constantes da
-     * classe correspondente, sem precisar criar o objeto para consultá-las.
-     */
+    // Pega os padrões direto das constantes, sem precisar criar o objeto
     private void aplicarPadroesDoTipo() {
         String escolhido = (String) tipo.getSelectedItem();
 
@@ -170,10 +161,7 @@ public class DialogoItem extends JDialog {
                 + obra.contarEmprestados() + " exemplar(es) emprestado(s) no momento.");
     }
 
-    /**
-     * Revista e DVD guardam número, mas mostram "Edição 42" e "120 min". No
-     * formulário entra só o número, que é o que o usuário edita.
-     */
+    // Revista e DVD mostram "Edição 42" e "120 min", mas no campo vai só o número
     private String valorEditavelDoDetalhe(ItemAcervo obra) {
         if (!obra.detalheENumerico()) {
             return obra.getDetalhe();
@@ -196,9 +184,7 @@ public class DialogoItem extends JDialog {
             dispose();
 
         } catch (BibliotecaException e) {
-            // Campo vazio, código repetido, ano fora do intervalo, prazo ou
-            // multa inválidos, exemplares de menos: a janela segue aberta com
-            // o que já foi digitado.
+            // a janela fica aberta com o que já foi digitado
             JOptionPane.showMessageDialog(this, e.getMessage(),
                     "Não foi possível salvar", JOptionPane.WARNING_MESSAGE);
         }
@@ -207,8 +193,6 @@ public class DialogoItem extends JDialog {
     private void cadastrar() throws BibliotecaException {
         String escolhido = (String) tipo.getSelectedItem();
 
-        // Cada tipo tem o seu método de cadastro porque os dados específicos
-        // e as validações são diferentes.
         if ("Revista".equals(escolhido)) {
             biblioteca.cadastrarRevista(codigo.getText(), titulo.getText(), ano.getText(),
                     detalhe.getText(), prazo.getText(), multa.getText(), exemplares.getText());

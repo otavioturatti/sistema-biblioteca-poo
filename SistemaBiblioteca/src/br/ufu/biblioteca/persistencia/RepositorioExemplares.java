@@ -9,15 +9,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Grava e recupera as cópias físicas de cada obra.
- *
- * Linha: codigoDaObra;tombo;disponivel
- *
- * Os exemplares ficam em arquivo separado porque uma obra pode ter dezenas
- * deles. A ligação é pelo código da obra, do mesmo jeito que duas tabelas se
- * ligam por uma chave.
- */
+// Linha: codigoDaObra;tombo;disponivel
+// Ficam em arquivo separado porque uma obra pode ter dezenas de cópias.
 public class RepositorioExemplares {
 
     private static final String ARQUIVO = "exemplares.csv";
@@ -37,11 +30,7 @@ public class RepositorioExemplares {
         ArquivoCsv.gravar(ARQUIVO, linhas);
     }
 
-    /**
-     * Recria os exemplares dentro das obras já carregadas e devolve um índice
-     * por tombo, que o repositório de empréstimos usa para reapontar cada
-     * linha ao exemplar certo.
-     */
+    // Devolve o índice por tombo, que o repositório de empréstimos usa depois
     public Map<String, Exemplar> carregar(Map<String, ItemAcervo> obras) throws PersistenciaException {
         Map<String, Exemplar> porTombo = new LinkedHashMap<>();
 
@@ -53,8 +42,7 @@ public class RepositorioExemplares {
 
             ItemAcervo obra = obras.get(campos[0]);
 
-            // Exemplar órfão: a obra foi removida do acervo e a linha ficou
-            // para trás. Ignorar deixa o sistema abrir mesmo assim.
+            // a obra foi removida e a linha ficou para trás
             if (obra == null) {
                 continue;
             }

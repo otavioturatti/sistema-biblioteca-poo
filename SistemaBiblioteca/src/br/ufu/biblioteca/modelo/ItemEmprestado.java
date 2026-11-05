@@ -3,17 +3,10 @@ package br.ufu.biblioteca.modelo;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
-/**
- * Uma linha do empréstimo: qual exemplar saiu, até quando, quando voltou e
- * quanto de multa gerou.
- *
- * Os construtores têm visibilidade de pacote de propósito, assim só a classe
- * Emprestimo cria estes objetos, que é o que caracteriza a composição:
- * nenhum ItemEmprestado existe solto no sistema.
- */
+// Uma linha do empréstimo: qual exemplar saiu, até quando e quanto de multa
+// deu. Os construtores não são public porque só o Emprestimo cria estes.
 public class ItemEmprestado {
 
-    // Agregação: o exemplar continua pertencendo ao acervo, aqui é referenciado.
     private final Exemplar exemplar;
     private final LocalDate previsaoDevolucao;
     private LocalDate devolvidoEm;
@@ -21,7 +14,7 @@ public class ItemEmprestado {
 
     ItemEmprestado(Exemplar exemplar, LocalDate retiradaEm) {
         this.exemplar = exemplar;
-        // o prazo vem da obra, então cada tipo de item vence em uma data
+        // o prazo vem da obra, então cada tipo vence em uma data
         this.previsaoDevolucao = retiradaEm.plusDays(exemplar.getObra().getPrazoDias());
     }
 
@@ -35,8 +28,6 @@ public class ItemEmprestado {
     double registrarDevolucao(LocalDate dataDevolucao) {
         this.devolvidoEm = dataDevolucao;
         long atraso = ChronoUnit.DAYS.between(previsaoDevolucao, dataDevolucao);
-        // calcularMulta é o mesmo método para todos, mas o valor diário é o da
-        // obra: livro, revista e DVD cobram valores diferentes
         this.multa = exemplar.getObra().calcularMulta(atraso);
         exemplar.marcarDisponivel();
         return multa;
@@ -56,7 +47,6 @@ public class ItemEmprestado {
         return exemplar;
     }
 
-    // Atalho para a obra, que é de onde vêm título, tipo e multa.
     public ItemAcervo getObra() {
         return exemplar.getObra();
     }

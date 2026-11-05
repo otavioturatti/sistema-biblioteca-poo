@@ -1,6 +1,5 @@
 package br.ufu.biblioteca.excecao;
 
-// Lançada quando o leitor tenta ultrapassar o limite de itens simultâneos.
 public class LimiteEmprestimosException extends BibliotecaException {
 
     public LimiteEmprestimosException(String leitor, int limite) {

@@ -34,17 +34,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Centro do sistema. Agrega o acervo, os leitores, os bibliotecários e os
- * empréstimos, e é a única classe que aplica as regras de negócio.
- *
- * A separação importa: a interface gráfica não decide nada sozinha, ela
- * chama um método daqui e trata a exceção que vier. Assim a mesma regra vale
- * para qualquer tela que venha a ser criada depois.
- */
+// Guarda as listas e aplica as regras de negócio. A tela não decide nada:
+// chama um método daqui e trata a exceção que vier.
 public class Biblioteca {
 
-    // Tetos de segurança para o que o bibliotecário digita no cadastro.
+    // Limites para o que pode ser digitado no cadastro
     public static final int LIMITE_PRAZO_DIAS = 90;
     public static final double LIMITE_MULTA_DIARIA = 50.0;
     public static final int LIMITE_EXEMPLARES = 99;
@@ -60,8 +54,6 @@ public class Biblioteca {
     private final RepositorioBibliotecarios repositorioBibliotecarios = new RepositorioBibliotecarios();
     private final RepositorioEmprestimos repositorioEmprestimos = new RepositorioEmprestimos();
 
-    // ---------------------------------------------------------------- dados
-
     public void carregarDados() throws PersistenciaException {
         acervo.clear();
         leitores.clear();
@@ -72,8 +64,8 @@ public class Biblioteca {
         leitores.addAll(repositorioLeitores.carregar());
         bibliotecarios.addAll(repositorioBibliotecarios.carregar());
 
-        // Os arquivos guardam só códigos, então os mapas abaixo servem para
-        // reapontar cada linha ao objeto que já está carregado na memória.
+        // os arquivos guardam só códigos, então os mapas abaixo reapontam
+        // cada linha ao objeto já carregado
         Map<String, ItemAcervo> mapaObras = new LinkedHashMap<>();
         for (ItemAcervo item : acervo) {
             mapaObras.put(item.getCodigo(), item);
@@ -87,7 +79,7 @@ public class Biblioteca {
 
         emprestimos.addAll(repositorioEmprestimos.carregar(mapaLeitores, mapaExemplares));
 
-        // Primeira execução: sem bibliotecário não há como entrar no sistema.
+        // sem bibliotecário não tem como entrar no sistema
         if (bibliotecarios.isEmpty()) {
             criarDadosIniciais();
             salvarTudo();
@@ -102,10 +94,7 @@ public class Biblioteca {
         repositorioEmprestimos.salvar(emprestimos);
     }
 
-    /**
-     * Carga inicial, usada só quando a pasta de dados está vazia. Deixa o
-     * sistema pronto para uso e para a demonstração, sem cadastro manual.
-     */
+    // Só roda quando a pasta de dados está vazia
     private void criarDadosIniciais() {
         bibliotecarios.add(new Bibliotecario("1001", "Roberto Caetano",
                 "11122233344", "roberto@ufu.br", "ufu2026"));
@@ -143,13 +132,7 @@ public class Biblioteca {
         acervo.add(obra);
     }
 
-    // -------------------------------------------------------- autenticação
-
-    /**
-     * Procura a pessoa pelo identificador e deixa que ela mesma valide a senha.
-     * Bibliotecário e leitor usam regras diferentes, mas a chamada é a mesma:
-     * é a sobrescrita de autenticar() que decide o resultado.
-     */
+    // Procura pelo identificador e deixa a própria pessoa validar a senha
     public Pessoa autenticar(String identificador, String senha) throws AutenticacaoException {
         List<Pessoa> usuarios = new ArrayList<>();
         usuarios.addAll(bibliotecarios);
@@ -164,8 +147,6 @@ public class Biblioteca {
 
         throw new AutenticacaoException();
     }
-
-    // ------------------------------------------------------------- acervo
 
     public void cadastrarLivro(String codigo, String titulo, String ano, String autor,
                                String prazo, String multa, String exemplares)
@@ -211,13 +192,8 @@ public class Biblioteca {
         salvarTudo();
     }
 
-    /**
-     * Altera uma obra já cadastrada. Código e tipo não mudam: eles são a
-     * identidade do registro e dos tombos já colados nos exemplares.
-     *
-     * Tudo é validado antes de qualquer alteração, para a obra não ficar pela
-     * metade quando um campo mais adiante estiver errado.
-     */
+    // Código e tipo não mudam: são a identidade do registro e dos tombos.
+    // Valida tudo antes de alterar para a obra não ficar pela metade.
     public void editarItem(ItemAcervo obra, String titulo, String ano, String detalhe,
                            String prazo, String multa, String exemplares)
             throws DadosInvalidosException, PersistenciaException {
@@ -255,11 +231,7 @@ public class Biblioteca {
         salvarTudo();
     }
 
-    /**
-     * Aplica o prazo e a multa informados. Campo em branco mantém o padrão do
-     * tipo, que é o comportamento esperado na maioria dos casos: o ajuste
-     * existe para a exceção, não para a regra.
-     */
+    // Campo em branco mantém o padrão do tipo
     public void ajustarPrazoEMulta(ItemAcervo item, String prazo, String multa)
             throws DadosInvalidosException {
 
@@ -300,10 +272,7 @@ public class Biblioteca {
         throw new ItemNaoEncontradoException(codigo);
     }
 
-    /**
-     * Busca por código, título, tipo ou detalhe, sem diferenciar maiúsculas.
-     * Texto vazio devolve o acervo inteiro.
-     */
+    // Texto vazio devolve o acervo inteiro
     public List<ItemAcervo> buscarObras(String texto) {
         List<ItemAcervo> encontrados = new ArrayList<>();
         String procurado = (texto == null) ? "" : texto.trim().toLowerCase();
@@ -319,8 +288,6 @@ public class Biblioteca {
         }
         return encontrados;
     }
-
-    // ------------------------------------------------------------ leitores
 
     public void cadastrarLeitor(String matricula, String nome, String cpf, String email)
             throws CadastroDuplicadoException, DadosInvalidosException, PersistenciaException {
@@ -356,10 +323,7 @@ public class Biblioteca {
         salvarTudo();
     }
 
-    /**
-     * Busca por matrícula, nome ou CPF. É o que a tela de empréstimo usa para
-     * achar o leitor sem depender de uma lista rolável com a base inteira.
-     */
+    // Usada pela tela de empréstimo, que não lista a base inteira
     public List<Leitor> buscarLeitores(String texto) {
         List<Leitor> encontrados = new ArrayList<>();
         String procurado = (texto == null) ? "" : texto.trim().toLowerCase();
@@ -375,13 +339,8 @@ public class Biblioteca {
         return encontrados;
     }
 
-    // --------------------------------------------------------- empréstimos
-
-    /**
-     * Regras aplicadas em ordem, da mais barata para a mais cara de verificar.
-     * Cada uma lança a sua própria exceção, então a tela sabe exatamente o que
-     * mostrar ao usuário sem precisar interpretar códigos de retorno.
-     */
+    // As regras vêm na ordem da mais barata para a mais cara de verificar,
+    // e cada uma tem a sua exceção
     public Emprestimo emprestar(Leitor leitor, List<ItemAcervo> obrasEscolhidas, LocalDate retiradaEm)
             throws DadosInvalidosException, ItemIndisponivelException,
             LimiteEmprestimosException, PendenciaException, PersistenciaException {
@@ -395,8 +354,7 @@ public class Biblioteca {
         if (retiradaEm.isAfter(LocalDate.now())) {
             throw new DadosInvalidosException("A data de retirada não pode estar no futuro.");
         }
-        // Sem um limite para trás, um ano digitado errado geraria anos de
-        // atraso e uma multa impossível.
+        // sem limite para trás, um ano digitado errado viraria multa de milhares
         LocalDate maisAntiga = LocalDate.now().minusYears(1);
         if (retiradaEm.isBefore(maisAntiga)) {
             throw new DadosInvalidosException(
@@ -415,19 +373,17 @@ public class Biblioteca {
             if (!obra.estaDisponivel()) {
                 throw new ItemIndisponivelException(obra.getTitulo());
             }
-            // Levar duas cópias do mesmo título não ajuda o leitor e tira da
-            // estante um exemplar que outra pessoa poderia estar usando.
+            // duas cópias do mesmo título só prendem exemplar que outro poderia usar
             if (jaEstaCom(leitor, obra)) {
                 throw new DadosInvalidosException(leitor.getNome()
                         + " já está com um exemplar de \"" + obra.getTitulo() + "\".");
             }
         }
 
-        // Só aqui o objeto é criado: nenhuma regra pode falhar depois deste
-        // ponto, então o empréstimo nunca fica pela metade.
+        // o objeto só é criado aqui, depois que todas as regras passaram
         Emprestimo emprestimo = new Emprestimo(leitor, retiradaEm);
         for (ItemAcervo obra : obrasEscolhidas) {
-            // O leitor escolhe o título, o sistema escolhe a cópia.
+            // o leitor escolhe o título, o sistema separa a cópia
             emprestimo.adicionarExemplar(obra.getExemplarDisponivel());
         }
         emprestimos.add(emprestimo);
@@ -451,8 +407,7 @@ public class Biblioteca {
                     "A devolução não pode ser anterior à retirada ("
                             + texto(emprestimo.getRetiradaEm()) + ").");
         }
-        // A devolução é o registro de algo que acabou de acontecer no balcão,
-        // então data futura só pode ser erro de digitação.
+        // data futura só pode ser erro de digitação
         if (dataDevolucao.isAfter(LocalDate.now())) {
             throw new DevolucaoInvalidaException("A devolução não pode ter data futura.");
         }
@@ -496,8 +451,6 @@ public class Biblioteca {
         }
         return total;
     }
-
-    // ------------------------------------------------------------ consultas
 
     public List<ItemAcervo> getAcervo() {
         return Collections.unmodifiableList(acervo);
@@ -545,8 +498,6 @@ public class Biblioteca {
         return total;
     }
 
-    // ----------------------------------------------------------- validação
-
     private void validarItem(String codigo, String titulo, String ano)
             throws CadastroDuplicadoException, DadosInvalidosException {
 
@@ -579,10 +530,7 @@ public class Biblioteca {
         return quantidade;
     }
 
-    /**
-     * O ponto e vírgula separa as colunas do arquivo, então deixá-lo passar
-     * corromperia a próxima leitura. É mais seguro barrar no cadastro.
-     */
+    // O ponto e vírgula separa as colunas do arquivo, então não pode passar
     private void exigirTexto(String valor, String campo) throws DadosInvalidosException {
         if (valor == null || valor.trim().isEmpty()) {
             throw new DadosInvalidosException("Preencha o campo " + campo + ".");
@@ -592,10 +540,7 @@ public class Biblioteca {
         }
     }
 
-    /**
-     * Aceita tanto 1,50 quanto 1.50, porque a vírgula é o separador decimal
-     * que o usuário brasileiro digita por reflexo.
-     */
+    // Aceita 1,50 e 1.50, porque ninguém digita ponto por aqui
     private double valorNaoNegativo(String valor, String campo) throws DadosInvalidosException {
         exigirTexto(valor, campo);
         try {
@@ -618,13 +563,12 @@ public class Biblioteca {
             }
             return numero;
         } catch (NumberFormatException e) {
-            // converte o erro técnico do parse em uma mensagem que o usuário entende
+            // troca o erro do parse por uma mensagem que dá para entender
             throw new DadosInvalidosException("O campo " + campo + " aceita apenas números.");
         }
     }
 
-    // As mensagens de erro vão direto para a tela, então as datas aparecem no
-    // formato que o usuário digita, não no formato interno do LocalDate.
+    // As mensagens vão para a tela, então a data sai no formato que ele digita
     private String texto(LocalDate data) {
         return data.format(DateTimeFormatter.ofPattern("dd/MM/uuuu"));
     }

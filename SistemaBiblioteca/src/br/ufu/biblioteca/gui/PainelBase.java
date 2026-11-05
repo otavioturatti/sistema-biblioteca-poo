@@ -5,11 +5,8 @@ import br.ufu.biblioteca.servico.Biblioteca;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 
-/**
- * Superclasse das abas do sistema. Toda aba precisa saber se redesenhar
- * quando os dados mudam em outra tela, por isso atualizar() é abstrato: a
- * tela principal chama esse método sem conhecer o painel que está aberto.
- */
+// Superclasse das abas. Toda aba precisa saber se redesenhar quando os dados
+// mudam em outra tela.
 public abstract class PainelBase extends JPanel {
 
     protected final Biblioteca biblioteca;

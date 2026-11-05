@@ -1,10 +1,7 @@
 package br.ufu.biblioteca.modelo;
 
-/**
- * Superclasse das pessoas do sistema. É abstrata porque "pessoa" sozinha não
- * existe na biblioteca: ou é leitor, ou é bibliotecário, e cada um autentica
- * de um jeito e tem permissões diferentes.
- */
+// Leitor e bibliotecário entram no sistema de jeitos diferentes, então o que
+// é comum fica aqui e o resto cada um resolve.
 public abstract class Pessoa implements Autenticavel {
 
     protected String nome;
@@ -17,18 +14,12 @@ public abstract class Pessoa implements Autenticavel {
         this.email = email;
     }
 
-    // Cada subclasse responde o próprio nome de perfil, usado no rodapé da tela.
     public abstract String getPerfil();
 
-    /**
-     * Código que a pessoa digita para entrar: matrícula para o leitor, SIAPE
-     * para o bibliotecário. Como o método existe aqui, a tela de login percorre
-     * uma lista de Pessoa sem precisar saber de qual classe é cada objeto.
-     */
+    // Matrícula do leitor ou SIAPE do bibliotecário
     public abstract String getIdentificador();
 
-    // Define o que a tela principal libera para o usuário logado, sem precisar
-    // de instanceof espalhado pela interface gráfica.
+    // Decide quais abas a tela principal vai montar
     public abstract boolean podeGerenciarAcervo();
 
     public String getNome() {

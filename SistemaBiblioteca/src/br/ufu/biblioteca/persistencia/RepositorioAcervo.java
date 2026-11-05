@@ -9,17 +9,9 @@ import br.ufu.biblioteca.modelo.Revista;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Grava e recupera as obras do acervo, sem os exemplares, que ficam em
- * arquivo próprio porque são muitos por obra.
- *
- * Linha: tipo;codigo;titulo;ano;detalhe;prazo;multa
- *
- * O "tipo" na primeira coluna é o que permite recriar o objeto da subclasse
- * certa na hora de carregar, já que o arquivo guarda texto e não objetos. As
- * duas últimas colunas só são preenchidas quando a obra teve prazo ou multa
- * ajustados: vazias, ela segue o padrão do tipo.
- */
+// Linha: tipo;codigo;titulo;ano;detalhe;prazo;multa
+// O tipo na primeira coluna diz qual subclasse criar na hora de carregar.
+// Prazo e multa ficam vazios quando a obra usa o padrão do tipo.
 public class RepositorioAcervo {
 
     private static final String ARQUIVO = "acervo.csv";
@@ -28,8 +20,6 @@ public class RepositorioAcervo {
         List<String> linhas = new ArrayList<>();
 
         for (ItemAcervo item : acervo) {
-            // getTipo() e getDetalhe() são polimórficos: cada subclasse grava a
-            // informação que só ela tem, sem o repositório testar classe a classe
             String prazo = (item.getPrazoDias() == item.getPrazoPadrao())
                     ? "" : String.valueOf(item.getPrazoDias());
             String multa = (Math.abs(item.getMultaPorDia() - item.getMultaPadrao()) < 0.001)
@@ -69,7 +59,7 @@ public class RepositorioAcervo {
                 if ("Livro".equals(tipo)) {
                     item = new Livro(codigo, titulo, ano, detalhe);
                 } else if ("Revista".equals(tipo)) {
-                    // a edição foi gravada como "Edição 42", então sobra o número
+                    // foi gravado como "Edição 42", então tira só o número
                     item = new Revista(codigo, titulo, ano, extrairNumero(detalhe));
                 } else if ("DVD".equals(tipo)) {
                     item = new Dvd(codigo, titulo, ano, extrairNumero(detalhe));
@@ -88,7 +78,7 @@ public class RepositorioAcervo {
                 acervo.add(item);
 
             } catch (NumberFormatException e) {
-                // arquivo editado à mão por fora do sistema, com número inválido
+                // alguém editou o arquivo à mão e botou algo que não é número
                 throw new PersistenciaException(
                         "Número inválido na linha do item " + codigo + ".", e);
             }

@@ -16,7 +16,6 @@ import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GridLayout;
 
-// Formulário de cadastro de leitor.
 public class DialogoLeitor extends JDialog {
 
     private final Biblioteca biblioteca;

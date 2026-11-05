@@ -4,18 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Superclasse abstrata do acervo. Representa a obra (o título catalogado),
- * não a cópia: a biblioteca pode ter vários exemplares do mesmo livro, e são
- * eles que circulam nos empréstimos.
- *
- * A obra é composta pelos seus exemplares: eles são criados aqui dentro e
- * deixam de existir junto com ela.
- *
- * Prazo e multa funcionam em dois níveis: cada tipo de item tem o seu padrão,
- * definido pela subclasse, e o bibliotecário pode ajustar o valor de uma obra
- * específica. Enquanto não ajusta, vale o padrão do tipo.
- */
+// Obra do catálogo. Não é a cópia: a biblioteca pode ter vários exemplares do
+// mesmo título, e são eles que vão para o empréstimo.
 public abstract class ItemAcervo implements Emprestavel {
 
     private String codigo;
@@ -24,7 +14,7 @@ public abstract class ItemAcervo implements Emprestavel {
 
     private final List<Exemplar> exemplares = new ArrayList<>();
 
-    // Nulo significa "sem ajuste": a obra segue o padrão da própria classe.
+    // null = a obra usa o valor padrão do tipo dela
     private Integer prazoPersonalizado;
     private Double multaPersonalizada;
 
@@ -34,33 +24,22 @@ public abstract class ItemAcervo implements Emprestavel {
         this.ano = ano;
     }
 
-    // ------------------------------------------------- comportamento do tipo
-
-    // Nome do tipo exibido na tabela e gravado como primeira coluna do CSV.
     public abstract String getTipo();
 
-    // Informação específica de cada tipo (autor, edição, duração).
     public abstract String getDetalhe();
 
-    // Como esse campo se chama na tela e se ele aceita apenas números.
+    // Rótulo do detalhe na tela e se ele aceita só número
     public abstract String getRotuloDetalhe();
 
     public abstract boolean detalheENumerico();
 
-    // Usado na edição: cada subclasse sabe em qual atributo guardar o valor.
     public abstract void definirDetalhe(String valor);
 
-    // Valores que cada tipo pratica quando a obra não recebe ajuste.
     public abstract int getPrazoPadrao();
 
     public abstract double getMultaPadrao();
 
-    // ------------------------------------------------------------ exemplares
-
-    /**
-     * Cria exemplares numerados em sequência a partir do que já existe, então
-     * a numeração não se repete quando a obra recebe cópias novas depois.
-     */
+    // Numera a partir do que já existe para não repetir tombo
     public void adicionarExemplares(int quantidade) {
         int proximo = exemplares.size() + 1;
         for (int i = 0; i < quantidade; i++) {
@@ -68,7 +47,6 @@ public abstract class ItemAcervo implements Emprestavel {
         }
     }
 
-    // Usado pela persistência para remontar um exemplar já gravado.
     public Exemplar restaurarExemplar(String tombo, boolean disponivel) {
         Exemplar exemplar = new Exemplar(this, tombo);
         if (!disponivel) {
@@ -78,11 +56,7 @@ public abstract class ItemAcervo implements Emprestavel {
         return exemplar;
     }
 
-    /**
-     * Devolve o primeiro exemplar livre, ou nulo se todos estiverem
-     * emprestados. Quem empresta não escolhe a cópia: o sistema entrega
-     * qualquer uma disponível, que é como funciona no balcão.
-     */
+    // Devolve null se todas as cópias estiverem emprestadas
     public Exemplar getExemplarDisponivel() {
         for (Exemplar exemplar : exemplares) {
             if (exemplar.estaDisponivel()) {
@@ -114,11 +88,7 @@ public abstract class ItemAcervo implements Emprestavel {
         return Collections.unmodifiableList(exemplares);
     }
 
-    /**
-     * Retira cópias do acervo, sempre começando pelas que estão na estante.
-     * Devolve quantas conseguiu remover, para a tela avisar quando sobrou
-     * exemplar emprestado.
-     */
+    // Tira primeiro as cópias que estão na estante e devolve quantas saíram
     public int removerExemplaresDisponiveis(int quantidade) {
         int removidos = 0;
         for (int i = exemplares.size() - 1; i >= 0 && removidos < quantidade; i--) {
@@ -135,8 +105,6 @@ public abstract class ItemAcervo implements Emprestavel {
         return contarDisponiveis() > 0;
     }
 
-    // ------------------------------------------------------ prazo e multa
-
     @Override
     public int getPrazoDias() {
         return (prazoPersonalizado != null) ? prazoPersonalizado : getPrazoPadrao();
@@ -147,11 +115,7 @@ public abstract class ItemAcervo implements Emprestavel {
         return (multaPersonalizada != null) ? multaPersonalizada : getMultaPadrao();
     }
 
-    /**
-     * Guarda o ajuste apenas quando ele difere do padrão do tipo. Assim uma
-     * obra que ficou com o valor de fábrica continua acompanhando a regra da
-     * classe mesmo que o padrão mude depois.
-     */
+    // Só guarda o ajuste se for diferente do padrão do tipo
     public void definirPrazo(int dias) {
         this.prazoPersonalizado = (dias == getPrazoPadrao()) ? null : dias;
     }
@@ -164,19 +128,13 @@ public abstract class ItemAcervo implements Emprestavel {
         return prazoPersonalizado != null || multaPersonalizada != null;
     }
 
-    /**
-     * A conta é a mesma para toda obra, o que muda é o valor diário. Por isso
-     * o método é concreto aqui e chama getMultaPorDia(), que cai no padrão da
-     * subclasse ou no ajuste feito para esta obra.
-     */
+    // A conta é igual para todos, o que muda é o valor diário de cada tipo
     public double calcularMulta(long diasDeAtraso) {
         if (diasDeAtraso <= 0) {
             return 0.0;
         }
         return diasDeAtraso * getMultaPorDia();
     }
-
-    // ---------------------------------------------------------- dados gerais
 
     public String getCodigo() {
         return codigo;

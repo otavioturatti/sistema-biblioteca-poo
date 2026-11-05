@@ -11,11 +11,7 @@ public class Bibliotecario extends Pessoa {
         this.senha = senha;
     }
 
-    /**
-     * Regra do bibliotecário: senha cadastrada e com no mínimo seis caracteres.
-     * Mesmo nome de método do leitor, comportamento diferente: é a sobrescrita
-     * que o polimorfismo usa na tela de login.
-     */
+    // Senha de verdade, com no mínimo seis caracteres
     @Override
     public boolean autenticar(String senha) {
         return this.senha != null && this.senha.equals(senha) && senha.length() >= 6;

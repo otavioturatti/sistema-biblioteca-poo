@@ -17,11 +17,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 
-/**
- * Janela principal. As abas montadas dependem do perfil de quem entrou: o
- * bibliotecário administra o sistema, o leitor apenas consulta. Quem responde
- * essa pergunta é o próprio objeto, pelo método podeGerenciarAcervo().
- */
+// As abas montadas dependem do perfil de quem entrou, e quem responde isso
+// é o próprio objeto.
 public class TelaPrincipal extends JFrame {
 
     private final JTabbedPane abas = new JTabbedPane();
@@ -40,16 +37,14 @@ public class TelaPrincipal extends JFrame {
             abas.addTab("Leitores", new PainelLeitores(biblioteca));
             abas.addTab("Resumo", new PainelResumo(biblioteca));
         } else {
-            // O leitor só chega aqui se for um Leitor, mas o instanceof deixa
-            // explícito que a conversão de tipo é segura.
+            // o instanceof deixa claro que a conversão é segura
             if (usuario instanceof Leitor) {
                 abas.addTab("Meus empréstimos", new PainelMeusEmprestimos(biblioteca, (Leitor) usuario));
             }
             abas.addTab("Acervo", new PainelAcervo(biblioteca, false));
         }
 
-        // Cada aba recarrega os dados ao ser aberta, assim um empréstimo feito
-        // em uma tela já aparece na outra.
+        // cada aba recarrega ao ser aberta, senão mostra dado velho
         abas.addChangeListener(evento -> atualizarAbaSelecionada());
 
         add(criarCabecalho(usuario), BorderLayout.NORTH);
@@ -62,8 +57,7 @@ public class TelaPrincipal extends JFrame {
 
     private void atualizarAbaSelecionada() {
         java.awt.Component selecionada = abas.getSelectedComponent();
-        // Todas as abas herdam de PainelBase, então a chamada é a mesma para
-        // qualquer uma delas: entra em ação a versão de atualizar() do painel.
+        // todas as abas herdam de PainelBase, então a chamada é a mesma
         if (selecionada instanceof PainelBase) {
             ((PainelBase) selecionada).atualizar();
         }
@@ -94,11 +88,8 @@ public class TelaPrincipal extends JFrame {
         return cabecalho;
     }
 
-    /**
-     * Encerra a sessão e devolve a tela de login, sem fechar o programa. Os
-     * dados já estão gravados a cada operação, então não há nada pendente
-     * para salvar neste ponto.
-     */
+    // Volta para o login sem fechar o programa. Não precisa salvar nada:
+    // cada operação já grava na hora.
     private void sair() {
         int resposta = JOptionPane.showConfirmDialog(this,
                 "Encerrar a sessão e voltar para a tela de acesso?",

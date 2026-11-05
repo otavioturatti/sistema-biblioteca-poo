@@ -37,7 +37,7 @@ public class Dvd extends ItemAcervo {
         this.duracaoMinutos = Integer.parseInt(valor.trim());
     }
 
-    // Mídia com poucas cópias: prazo mínimo e multa mais alta.
+    // Poucas cópias, então prazo curto e multa alta
     @Override
     public int getPrazoPadrao() {
         return PRAZO_PADRAO;

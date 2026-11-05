@@ -37,7 +37,7 @@ public class Revista extends ItemAcervo {
         this.edicao = Integer.parseInt(valor.trim());
     }
 
-    // Prazo curto porque a revista circula entre vários leitores no mês.
+    // Prazo curto porque a revista roda entre vários leitores no mês
     @Override
     public int getPrazoPadrao() {
         return PRAZO_PADRAO;

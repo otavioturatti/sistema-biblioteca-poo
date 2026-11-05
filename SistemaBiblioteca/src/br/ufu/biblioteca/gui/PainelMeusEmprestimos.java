@@ -14,11 +14,7 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.time.LocalDate;
 
-/**
- * Visão do leitor: apenas os empréstimos dele, sem nenhum botão de alteração.
- * É a mesma Biblioteca por trás, o que muda é o recorte dos dados e as ações
- * oferecidas, decididas pelo perfil de quem entrou.
- */
+// O que o leitor vê: só os empréstimos dele e nenhum botão de alteração.
 public class PainelMeusEmprestimos extends PainelBase {
 
     private static final String[] COLUNAS =

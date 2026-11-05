@@ -33,13 +33,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Tela central do sistema: registra empréstimos e devoluções.
- *
- * O leitor é localizado por busca, não escolhido em uma lista com a base
- * inteira. O catálogo mostra uma linha por obra, com quantos exemplares estão
- * na estante, e o sistema é quem separa a cópia na hora de emprestar.
- */
+// Tela principal: empréstimos e devoluções. O leitor é achado por busca e o
+// catálogo mostra uma linha por obra, com os exemplares disponíveis.
 public class PainelEmprestimos extends PainelBase {
 
     private static final String[] COLUNAS_CATALOGO =
@@ -57,24 +52,23 @@ public class PainelEmprestimos extends PainelBase {
 
     private Leitor leitor;
 
-    // Obras que estão sendo exibidas no catálogo, na mesma ordem do modelo.
+    // obras que estão na tabela, na mesma ordem das linhas
     private final List<ItemAcervo> catalogoExibido = new ArrayList<>();
 
-    // Guarda o empréstimo de cada linha da tabela de baixo, já que um
-    // empréstimo ocupa várias linhas quando leva mais de um item.
+    // qual empréstimo está em cada linha, já que um empréstimo com três itens
+    // ocupa três linhas
     private final List<Emprestimo> emprestimoPorLinha = new ArrayList<>();
 
     private final DefaultTableModel modeloCatalogo = new DefaultTableModel(COLUNAS_CATALOGO, 0) {
         @Override
         public boolean isCellEditable(int linha, int coluna) {
-            // Só a caixa de marcação é clicável, o resto é informação.
+            // só a caixinha é clicável
             return coluna == 0;
         }
 
         @Override
         public Class<?> getColumnClass(int coluna) {
-            // Declarar a coluna como Boolean é o que faz o Swing desenhar a
-            // caixa de marcação no lugar do texto "true".
+            // declarando como Boolean o Swing desenha a caixinha no lugar do texto
             return (coluna == 0) ? Boolean.class : String.class;
         }
     };
@@ -100,8 +94,6 @@ public class PainelEmprestimos extends PainelBase {
         prepararTabelas();
         atualizar();
     }
-
-    // ------------------------------------------------------------- montagem
 
     private JPanel criarFormulario() {
         campoRetirada.setText(Formatos.hoje());
@@ -150,7 +142,7 @@ public class PainelEmprestimos extends PainelBase {
             }
         });
 
-        // Marcar ou desmarcar um item atualiza o contador na hora.
+        // atualiza o contador a cada clique na caixinha
         modeloCatalogo.addTableModelListener(evento -> atualizarContador());
 
         JScrollPane rolagem = new JScrollPane(tabelaCatalogo);
@@ -230,8 +222,6 @@ public class PainelEmprestimos extends PainelBase {
         });
     }
 
-    // ----------------------------------------------------------- atualização
-
     @Override
     public void atualizar() {
         conferirLeitorEscolhido();
@@ -239,10 +229,7 @@ public class PainelEmprestimos extends PainelBase {
         atualizarTabelaDeEmprestimos();
     }
 
-    /**
-     * O leitor pode ter sido removido em outra aba, ou ter pego mais itens.
-     * A etiqueta é remontada para não mostrar informação velha.
-     */
+    // O leitor pode ter sido removido em outra aba, então confere antes
     private void conferirLeitorEscolhido() {
         if (leitor != null && !biblioteca.getLeitores().contains(leitor)) {
             leitor = null;
@@ -307,8 +294,7 @@ public class PainelEmprestimos extends PainelBase {
                     situacao = "Em dia";
                 }
 
-                // Enquanto o item não volta, a multa mostrada é a projeção do
-                // atraso até hoje, calculada pelo valor diário da obra.
+                // enquanto não volta, mostra quanto já deu de multa até hoje
                 double multa = emprestado.estaDevolvido()
                         ? emprestado.getMulta()
                         : emprestado.getObra().calcularMulta(atraso);
@@ -340,8 +326,6 @@ public class PainelEmprestimos extends PainelBase {
         }
     }
 
-    // --------------------------------------------------------------- ações
-
     private void escolherLeitor() {
         DialogoBuscaLeitor dialogo = new DialogoBuscaLeitor(
                 (java.awt.Frame) SwingUtilities.getWindowAncestor(this), biblioteca);
@@ -372,8 +356,7 @@ public class PainelEmprestimos extends PainelBase {
     private void emprestar() {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         try {
-            // Encerra a edição em andamento, senão o último clique na caixa de
-            // marcação ainda não teria chegado ao modelo da tabela.
+            // sem isso o último clique na caixinha não chega no modelo da tabela
             if (tabelaCatalogo.isEditing()) {
                 tabelaCatalogo.getCellEditor().stopCellEditing();
             }
@@ -388,13 +371,11 @@ public class PainelEmprestimos extends PainelBase {
             atualizar();
 
         } catch (BibliotecaException e) {
-            // Limite atingido, obra sem exemplar livre, leitor em atraso, data
-            // inválida ou erro de gravação: todas chegam com mensagem pronta.
+            // limite, obra esgotada, atraso, data inválida: tudo cai aqui
             JOptionPane.showMessageDialog(this, e.getMessage(),
                     "Empréstimo não realizado", JOptionPane.WARNING_MESSAGE);
         } finally {
-            // O finally garante que o cursor volte ao normal mesmo quando a
-            // operação termina em exceção.
+            // o finally garante que o cursor volte ao normal mesmo se der erro
             setCursor(Cursor.getDefaultCursor());
         }
     }
@@ -408,8 +389,7 @@ public class PainelEmprestimos extends PainelBase {
             return;
         }
 
-        // A tabela pode estar ordenada por qualquer coluna, então a linha
-        // clicada precisa ser convertida para a posição real dos dados.
+        // a tabela é ordenável, então converte a linha clicada
         Emprestimo emprestimo = emprestimoPorLinha.get(
                 tabelaEmprestimos.convertRowIndexToModel(linha));
 

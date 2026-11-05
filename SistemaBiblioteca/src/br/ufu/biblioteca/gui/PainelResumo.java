@@ -16,11 +16,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.time.LocalDate;
 
-/**
- * Números gerais da biblioteca. Também mostra onde os arquivos estão
- * gravados, o que serve para abrir os CSV durante a apresentação e provar
- * que os dados sobrevivem ao fechamento do programa.
- */
+// Números gerais e o caminho da pasta de dados, para achar os arquivos fácil.
 public class PainelResumo extends PainelBase {
 
     private final JPanel cartoes = new JPanel(new GridLayout(2, 3, 12, 12));

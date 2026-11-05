@@ -28,15 +28,8 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Lista o catálogo e, para o bibliotecário, permite cadastrar, editar e
- * remover obras.
- *
- * Cada linha é uma obra, não uma cópia: a coluna de exemplares mostra quantos
- * estão na estante do total que a biblioteca possui. As colunas de prazo e
- * multa mostram o polimorfismo na prática, já que os valores vêm do tipo de
- * cada item.
- */
+// Cada linha é uma obra, não uma cópia: a coluna de exemplares mostra quantos
+// estão na estante do total que a biblioteca tem.
 public class PainelAcervo extends PainelBase {
 
     private static final String[] COLUNAS =
@@ -48,7 +41,7 @@ public class PainelAcervo extends PainelBase {
     private final DefaultTableModel modelo = new DefaultTableModel(COLUNAS, 0) {
         @Override
         public boolean isCellEditable(int linha, int coluna) {
-            // A tabela é só de leitura: alterações passam pelo formulário.
+            // tabela só de leitura, quem altera é o formulário
             return false;
         }
     };
@@ -78,7 +71,7 @@ public class PainelAcervo extends PainelBase {
         tabela.getColumnModel().getColumn(0).setPreferredWidth(70);
         tabela.getColumnModel().getColumn(2).setPreferredWidth(240);
 
-        // Deixa visível de longe a obra que está sem exemplar na estante.
+        // pinta de vermelho a obra que está sem exemplar
         tabela.getColumnModel().getColumn(5).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable tabela, Object valor,
@@ -95,7 +88,7 @@ public class PainelAcervo extends PainelBase {
         });
 
         if (podeEditar) {
-            // Duplo clique na linha abre a edição, que é o atalho esperado.
+            // duplo clique abre a edição
             tabela.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent evento) {
@@ -116,7 +109,7 @@ public class PainelAcervo extends PainelBase {
 
         filtroTipo.addActionListener(evento -> atualizar());
 
-        // Filtra conforme o usuário digita, sem precisar de botão.
+        // filtra enquanto digita, sem botão de buscar
         busca.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
@@ -180,7 +173,7 @@ public class PainelAcervo extends PainelBase {
                 continue;
             }
 
-            // O asterisco marca a obra que não segue o padrão do tipo.
+            // asterisco marca a obra que não segue o padrão do tipo
             String marca = item.temAjustePersonalizado() ? " *" : "";
             exemplares += item.getTotalDeExemplares();
 
@@ -241,8 +234,6 @@ public class PainelAcervo extends PainelBase {
             biblioteca.removerItem(item);
             atualizar();
         } catch (BibliotecaException e) {
-            // Obra com exemplar emprestado ou falha ao gravar o arquivo: as
-            // duas situações chegam aqui com a mensagem pronta.
             JOptionPane.showMessageDialog(this, e.getMessage(),
                     "Não foi possível remover", JOptionPane.WARNING_MESSAGE);
         }
@@ -253,8 +244,7 @@ public class PainelAcervo extends PainelBase {
         if (linha < 0) {
             return null;
         }
-        // A tabela é ordenável, então a linha da tela não corresponde direto à
-        // posição da lista: o índice precisa ser convertido.
+        // a tabela é ordenável, então a linha da tela não é a posição da lista
         int indice = tabela.convertRowIndexToModel(linha);
         if (indice < 0 || indice >= itensExibidos.size()) {
             return null;

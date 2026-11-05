@@ -7,11 +7,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Locale;
 
-/**
- * Conversões entre o que o usuário vê e o que o sistema usa. A tela mostra
- * data em dd/MM/aaaa e valor em reais, enquanto o modelo trabalha com
- * LocalDate e double.
- */
+// A tela mostra data em dd/MM/aaaa e valor em reais, o modelo usa LocalDate
+// e double.
 public final class Formatos {
 
     private static final DateTimeFormatter DATA = DateTimeFormatter.ofPattern("dd/MM/uuuu");
@@ -24,10 +21,7 @@ public final class Formatos {
         return (data == null) ? "-" : data.format(DATA);
     }
 
-    /**
-     * Converte o texto digitado em data. O usuário pode errar o formato, então
-     * a DateTimeParseException é capturada e vira uma mensagem clara.
-     */
+    // Se o formato estiver errado, vira mensagem em vez de estourar na tela
     public static LocalDate lerData(String texto, String campo) throws DadosInvalidosException {
         if (texto == null || texto.trim().isEmpty()) {
             throw new DadosInvalidosException("Informe a " + campo + ".");
@@ -44,7 +38,7 @@ public final class Formatos {
         return String.format(BRASIL, "R$ %.2f", valor);
     }
 
-    // Mesmo número sem o prefixo, para preencher campos de formulário.
+    // Sem o R$, para preencher campo de formulário
     public static String numero(double valor) {
         return String.format(BRASIL, "%.2f", valor);
     }

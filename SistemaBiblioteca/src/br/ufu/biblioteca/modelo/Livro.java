@@ -2,7 +2,6 @@ package br.ufu.biblioteca.modelo;
 
 public class Livro extends ItemAcervo {
 
-    // Padrões do tipo, usados quando a obra não recebe ajuste no cadastro.
     public static final int PRAZO_PADRAO = 14;
     public static final double MULTA_PADRAO = 0.50;
 
@@ -38,7 +37,7 @@ public class Livro extends ItemAcervo {
         this.autor = valor;
     }
 
-    // Livro fica mais tempo com o leitor e tem a multa mais barata do acervo.
+    // Livro fica mais tempo com o leitor e a multa é a mais barata
     @Override
     public int getPrazoPadrao() {
         return PRAZO_PADRAO;

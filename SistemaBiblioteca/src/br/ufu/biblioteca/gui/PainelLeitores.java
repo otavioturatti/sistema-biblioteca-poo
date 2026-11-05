@@ -26,10 +26,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Cadastro de leitores, com busca por matrícula, nome ou CPF. A situação de
- * cada um é calculada na hora, a partir dos empréstimos.
- */
+// Cadastro de leitores. A situação de cada um sai dos empréstimos, não fica
+// guardada em lugar nenhum.
 public class PainelLeitores extends PainelBase {
 
     private static final String[] COLUNAS =
@@ -172,7 +170,7 @@ public class PainelLeitores extends PainelBase {
             return;
         }
 
-        // A tabela é ordenável, então a linha da tela precisa ser convertida.
+        // a tabela é ordenável, então converte a linha
         Leitor leitor = leitoresExibidos.get(tabela.convertRowIndexToModel(linha));
 
         int resposta = JOptionPane.showConfirmDialog(this,

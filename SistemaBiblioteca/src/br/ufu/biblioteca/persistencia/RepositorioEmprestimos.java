@@ -14,17 +14,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Grava e recupera os empréstimos.
- *
- * Linha: id;matriculaLeitor;retiradaEm;status;tombo;previsao;devolvidoEm;multa
- *
- * Cada exemplar emprestado vira uma linha e repete o cabeçalho do empréstimo.
- * Na leitura as linhas são agrupadas pelo id, remontando o empréstimo com
- * todos os exemplares dele. O arquivo guarda a matrícula e o tombo, não os
- * dados do leitor e da obra, porque esses objetos são os mesmos já carregados
- * nas outras listas: o empréstimo apenas os referencia.
- */
+// Linha: id;matriculaLeitor;retiradaEm;status;tombo;previsao;devolvidoEm;multa
+// Cada exemplar vira uma linha e repete o cabeçalho. Na leitura as linhas
+// são agrupadas pelo id.
 public class RepositorioEmprestimos {
 
     private static final String ARQUIVO = "emprestimos.csv";
@@ -49,10 +41,7 @@ public class RepositorioEmprestimos {
         ArquivoCsv.gravar(ARQUIVO, linhas);
     }
 
-    /**
-     * Precisa dos leitores e dos exemplares já carregados para religar as
-     * referências que o arquivo guarda apenas como código.
-     */
+    // Precisa dos leitores e exemplares já carregados para religar as referências
     public List<Emprestimo> carregar(Map<String, Leitor> leitores,
                                      Map<String, Exemplar> exemplares) throws PersistenciaException {
 
@@ -69,9 +58,7 @@ public class RepositorioEmprestimos {
                 Leitor leitor = leitores.get(campos[1]);
                 Exemplar exemplar = exemplares.get(campos[4]);
 
-                // Registro órfão: aponta para um leitor ou exemplar que não
-                // existe mais. A linha é ignorada para o sistema continuar
-                // abrindo normalmente.
+                // aponta para leitor ou exemplar que não existe mais
                 if (leitor == null || exemplar == null) {
                     continue;
                 }
@@ -95,7 +82,7 @@ public class RepositorioEmprestimos {
                 throw new PersistenciaException(
                         "Data fora do formato aaaa-mm-dd no arquivo " + ARQUIVO + ".", e);
             } catch (IllegalArgumentException e) {
-                // status gravado com um valor que não existe no enum
+                // status que não existe no enum
                 throw new PersistenciaException(
                         "Situação de empréstimo desconhecida no arquivo.", e);
             }
