@@ -6,6 +6,17 @@ Sistemas de Informação da Faculdade de Computação da Universidade Federal de
 Sistema em Java com interface gráfica Swing para controle de acervo, leitores e
 empréstimos, com os dados gravados em arquivos CSV.
 
+## Integrantes
+
+| Nome | Matrícula |
+|---|---|
+| Caio Ramalho Araújo | 12521BSI256 |
+| Gustavo Silva do Carmo | 12521BSI254 |
+| João Otávio Turatti Barbosa | 12421BSI345 |
+| Mariany Oliveira Cordeiro | 12521BSI258 |
+| Micaelly Ferreira Magalhães | 12521BSI251 |
+| Pedro Lucas Moreira Araújo | 12521BSI255 |
+
 ## Como executar
 
 Requer JDK 17 ou superior.
